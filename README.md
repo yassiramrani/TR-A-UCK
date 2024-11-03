@@ -10,7 +10,7 @@ The project is developed by the **Thinkera Team**:
 
 - **Yassir Amrani** - Team Leader
 - **Yassine Janane**
-- **Zid Harboul**
+- **Zaid Harboul**
 - **Salaheddine Manae**
 - **Tmimi Saad**
 - **Mohamed Benajiba**
