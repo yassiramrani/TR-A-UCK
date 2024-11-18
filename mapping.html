@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord TR(a)UCK</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <style>
+        /* Palette de couleurs */
+        :root {
+            --dark-gray: #30393E; /* Couleur principale pour l'arrière-plan */
+            --medium-gray: #988F88; /* Texte secondaire ou sections neutres */
+            --light-cream: #F8E5D7; /* Arrière-plan clair ou zones de mise en avant */
+            --beige: #D5C1B6; /* Zones intermédiaires */
+            --pale-pink: #FAEFEB; /* Pour les surlignages doux */
+            --peach: #F8BD97; /* Boutons ou éléments interactifs */
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark-gray);
+            color: var(--light-cream);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--dark-gray);
+            color: var(--pale-pink);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        header button {
+            margin: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--peach);
+            color: var(--dark-gray);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        header button:hover {
+            background-color: var(--medium-gray);
+        }
+
+        main {
+            padding: 2rem;
+        }
+
+        #map-container {
+            background: var(--light-cream);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2, h3 {
+            color: var(--peach);
+        }
+
+        form {
+            margin-top: 1rem;
+        }
+
+        form label {
+            margin-right: 0.5rem;
+        }
+
+        form input {
+            padding: 0.5rem;
+            margin-right: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--medium-gray);
+            background: var(--light-cream);
+            color: var(--dark-gray);
+        }
+
+        form button {
+            padding: 0.5rem 1rem;
+            background-color: var(--peach);
+            color: var(--dark-gray);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: var(--medium-gray);
+        }
+
+        #info-panel {
+            margin-top: 2rem;
+            background-color: var(--light-cream);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #info-panel h3 {
+            color: var(--peach);
+        }
+
+        .alert {
+            background-color: var(--pale-pink);
+            color: var(--dark-gray);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Tableau de Bord TR(a)UCK</h1>
+        </div>
+    </header>
+
+    <main>
+        <section id="driver-view">
+            <h2>Itinéraire Actuel</h2>
+            <form id="route-form">
+                <label for="departure">Ville de départ:</label>
+                <input type="text" id="departure" name="departure">
+                <label for="arrival">Ville d'arrivée:</label>
+                <input type="text" id="arrival" name="arrival">
+                <button type="submit">Calculer l'itinéraire</button>
+            </form>
+        </section>
+        <br>
+
+        <section id="map-container">
+            <div id="map" style="height: 400px; width: 100%;"></div>
+        </section>
+
+        <section id="info-panel">
+            <h3>Informations du Trajet</h3>
+            <div id="route-info"></div>
+        </section>
+    </main>
+
+    <script>
+        const ORS_API_KEY = '5b3ce3597851110001cf6248dd7573aefdfa4f588dda40f10b80d856';
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            const map = L.map('map').setView([35.774, -5.802], 13);
+    
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+    
+            const routingControl = L.Routing.control({
+                waypoints: [],
+                routeWhileDragging: true
+            }).addTo(map);
+    
+            document.getElementById('route-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+    
+                const departure = document.getElementById('departure').value;
+                const arrival = document.getElementById('arrival').value;
+    
+                fetch(`https://api.openrouteservice.org/geocode/search?api_key=${ORS_API_KEY}&text=${departure}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.features || data.features.length === 0) {
+                            alert('Ville de départ non trouvée');
+                            return;
+                        }
+                        const departureCoords = data.features[0].geometry.coordinates;
+    
+                        fetch(`https://api.openrouteservice.org/geocode/search?api_key=${ORS_API_KEY}&text=${arrival}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (!data.features || data.features.length === 0) {
+                                    alert('Ville d\'arrivée non trouvée');
+                                    return;
+                                }
+                                const arrivalCoords = data.features[0].geometry.coordinates;
+    
+                                routingControl.setWaypoints([
+                                    L.latLng(departureCoords[1], departureCoords[0]),
+                                    L.latLng(arrivalCoords[1], arrivalCoords[0])
+                                ]);
+    
+                                fetch(`https://api.openrouteservice.org/v2/directions/driving-car?api_key=${ORS_API_KEY}&start=${departureCoords[0]},${departureCoords[1]}&end=${arrivalCoords[0]},${arrivalCoords[1]}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        const route = data.routes[0];
+                                        const distance = (route.summary.distance / 1000).toFixed(2); // km
+                                        const duration = (route.summary.duration / 3600).toFixed(2); // heures
+                                        const fuelConsumption = (distance * 0.08).toFixed(2); // consommation moyenne 8 L/100km
+    
+                                        // Afficher les informations dans la section
+                                        document.getElementById('route-info').innerHTML = `
+                                            <p><strong>Distance :</strong> ${distance} km</p>
+                                            <p><strong>Temps estimé :</strong> ${duration} heures</p>
+                                            <p><strong>Consommation de carburant estimée :</strong> ${fuelConsumption} L</p>
+                                            <p><strong>Instructions :</strong></p>
+                                            <ul>
+                                                ${route.segments[0].steps.map(step => `<li>${step.instruction}</li>`).join('')}
+                                            </ul>
+                                        `;
+    
+                                        // Système de recommandations
+                                        if (fuelConsumption > 50) {
+                                            document.getElementById('route-info').innerHTML += `
+                                                <div class="alert">⚠️ Consommation élevée. Pensez à vérifier votre réservoir ou planifier un arrêt.</div>
+                                            `;
+                                        }
+    
+                                        if (duration > 5) {
+                                            document.getElementById('route-info').innerHTML += `
+                                                <div class="alert">💡 Planifiez une pause. La durée du trajet est supérieure à 5 heures.</div>
+                                            `;
+                                        }
+                                    });
+                            });
+                    });
+            });
+        });
+    </script>
+    
+</body>
+</html>
