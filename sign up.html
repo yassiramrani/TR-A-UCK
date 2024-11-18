@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - TR(a)UCK Espace Client</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1B1B1B;
+            color: #FFF1E2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        header {
+            background: #555151;
+            color: #FFF1E2;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0;
+        }
+
+        nav ul li a {
+            color: #FFF1E2;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #623F2B;
+            color: #FFF1E2;
+        }
+
+        .header-right {
+            margin-left: auto;
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-right a {
+            color: #FFF1E2;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            background-color: #555151;
+            transition: background-color 0.3s;
+        }
+
+        .header-right a:hover {
+            background-color: #B76E2D;
+        }
+
+        .signup-container {
+            background-color: #555151;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            margin-top: 100px; /* Adjust for navbar height */
+        }
+
+        .signup-container h2 {
+            margin-bottom: 2rem;
+            color: #B76E2D;
+        }
+
+        .signup-container input {
+            width: 90%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            border: none;
+            background: #9F9689;
+            color: #1B1B1B;
+        }
+
+        .signup-container button {
+            padding: 1rem 2rem;
+            background-color: #B76E2D;
+            color: #1B1B1B;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            width: 70%;
+            font-weight: bold;
+        }
+
+        .signup-container button:hover {
+            background-color: #9F9689;
+        }
+
+        .signup-container p {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .signup-container a {
+            color: #FFF1E2;
+            text-decoration: none;
+        }
+
+        .signup-container a:hover {
+            color: #B76E2D;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="home page.html">Accueil</a></li>
+                <li><a href="#about">À propos</a></li>
+                <li><a href="#features">Fonctionnalités</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="header-right">
+            <a href="#">Contacter-nous</a>
+        </div>
+    </header>
+
+    <div class="signup-container">
+        <div class="logo">
+            <img src="assets/logo 2.png" alt="Thinkera Logo">
+        </div>
+        <h2>Inscription - Espace Client</h2>
+        <form id="signup-form" method="GET" action="signup.php"> <!-- Ensure this points to your PHP script -->
+            <input type="text" id="fullname" name="fullname" placeholder="Nom complet" required>
+            <input type="email" id="email" name="email" placeholder="Votre email" required>
+            <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+            <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirmer le mot de passe" required>
+            <button type="submit">S'inscrire</button>
+        </form>
+        
+        <p>Déjà inscrit ? <a href="login.html">Se connecter</a></p>
+    </div>
+
+    <script>
+        const signupForm = document.getElementById('signup-form');
+
+signupForm.addEventListener('submit', (e) => {
+    e.preventDefault(); // Prevent default form submission to handle validation
+
+    const fullname = document.getElementById('fullname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+
+    // Simple validation
+    if (password !== confirmPassword) {
+        alert('Les mots de passe ne correspondent pas.');
+        return; // Stop submission if validation fails
+    }
+
+    // Additional client-side validations (optional)
+    if (fullname === '' || email === '' || password === '') {
+        alert('Tous les champs doivent être remplis.');
+        return;
+    }
+
+    // If all validations pass, submit the form
+    signupForm.submit();
+});
+
+    </script>
+</body>
+</html>
