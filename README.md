@@ -12,7 +12,6 @@ The project is developed by the **Thinkera Team**:
 - **Yassine Janane**
 - **Zaid Harboul**
 - **Salaheddine Manae**
-- **Tmimi Saad**
 - **Mohamed Benajiba**
 
 ## Objectives
