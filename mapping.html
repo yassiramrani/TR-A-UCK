@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord TR(a)UCK</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        header button {
+            margin: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        header button:hover {
+            background-color: #003d80;
+        }
+
+        main {
+            padding: 2rem;
+        }
+
+        #driver-view, #admin-view, #weekly-report {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #map-container {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2, h3 {
+            color: #007bff;
+        }
+
+        form {
+            margin-top: 1rem;
+        }
+
+        form label {
+            margin-right: 0.5rem;
+        }
+
+        form input {
+            padding: 0.5rem;
+            margin-right: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        form button {
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Tableau de Bord TR(a)UCK</h1>
+            <button onclick="switchToDriverView()">Vue Conducteur</button>
+            <button onclick="switchToAdminView()">Vue Administrateur</button>
+        </div>
+    </header>
+
+    <main>
+        <section id="driver-view">
+            <h2>Itinéraire Actuel</h2>
+            <form id="route-form">
+                <label for="departure">Ville de départ:</label>
+                <input type="text" id="departure" name="departure" >
+                <label for="arrival">Ville d'arrivée:</label>
+                <input type="text" id="arrival" name="arrival" >
+                <button type="submit">Calculer l'itinéraire</button>
+            </form>
+            <p id="current-route">Route: </p>
+            <p id="eta">Temps estimé d'arrivée (ETA): </p>
+            <div>
+                <h3>Alertes :</h3>
+                <ul id="alerts"></ul>
+            </div>
+        </section>
+
+        <section id="map-container">
+            <div id="map" style="height: 400px; width: 100%;"></div>
+        </section>
+
+        <!-- Section Rapport Hebdomadaire -->
+        <section id="weekly-report">
+            <h2>Rapport Hebdomadaire</h2>
+            <div>
+                <p>Distance parcourue: <span id="distance-traveled">0 km</span></p>
+                <p>Consommation de carburant: <span id="fuel-consumption">0 litres</span></p>
+                <p>Temps de trajet moyen: <span id="average-time">0 heures</span></p>
+                <h3>Recommandations :</h3>
+                <ul id="recommendations"></ul>
+            </div>
+        </section>
+
+        <section id="admin-view" style="display: none;">
+            <h2>Vue Administrateur</h2>
+            <!-- Contenu pour la vue Administrateur -->
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+             var map = L.map('map').setView([35.774, -5.802], 13);
+
+            var markers = [];
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            function getCoordinates(city, callback) {
+                fetch(`https://nominatim.openstreetmap.org/search?city=${city}&format=json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            callback(data[0].lat, data[0].lon);
+                        } else {
+                            alert("Ville non trouvée : " + city);
+                        }
+                    })
+                    .catch(error => console.error('Erreur de récupération des coordonnées:', error));
+            }
+
+            function calculateDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a =
+                    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+            }
+
+            function formatETA(eta) {
+                const hours = Math.floor(eta);
+                const minutes = Math.round((eta - hours) * 60);
+                return `${hours} heures ${minutes} minutes`;
+            }
+
+            function calculateFuelConsumption(distance) {
+                const averageFuelConsumptionPerKm = 0.1;
+                return distance * averageFuelConsumptionPerKm;
+            }
+
+            function updateRecommendations(distance) {
+                const recommendations = document.getElementById('recommendations');
+                recommendations.innerHTML = ''; 
+
+                if (distance < 50) {
+                    recommendations.innerHTML = "<li>Trajet court : Pensez à vérifier les niveaux de carburant et d'huile.</li>";
+                } else if (distance < 200) {
+                    recommendations.innerHTML = "<li>Trajet moyen : Utilisez des routes secondaires pour éviter la circulation.</li>";
+                } else {
+                    recommendations.innerHTML = "<li>Trajet long : Préparez-vous avec des pauses régulières pour réduire la fatigue.</li>";
+                }
+            }
+
+            document.getElementById('route-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                markers.forEach(marker => map.removeLayer(marker));
+                markers = [];
+
+                const departure = document.getElementById('departure').value;
+                const arrival = document.getElementById('arrival').value;
+
+                getCoordinates(departure, function(lat1, lon1) {
+                    getCoordinates(arrival, function(lat2, lon2) {
+                        const distance = calculateDistance(lat1, lon1, lat2, lon2);
+
+                        document.getElementById('current-route').textContent = `Route: ${departure} -> ${arrival}`;
+                        document.getElementById('eta').textContent = `Temps estimé d'arrivée (ETA): ${formatETA(distance / 60)}`;  // Vitesse ajustée à 60 km/h
+                        document.getElementById('distance-traveled').textContent = `${distance.toFixed(2)} km`;
+                        document.getElementById('fuel-consumption').textContent = `${calculateFuelConsumption(distance).toFixed(2)} litres`;
+                        document.getElementById('average-time').textContent = formatETA(distance / 60);  // Vitesse ajustée à 60 km/h
+
+                        updateRecommendations(distance);
+
+                        map.setView([lat1, lon1], 6);
+                        var marker1 = L.marker([lat1, lon1]).addTo(map).bindPopup(`${departure}`).openPopup();
+                        var marker2 = L.marker([lat2, lon2]).addTo(map).bindPopup(`${arrival}`).openPopup();
+                        markers.push(marker1, marker2);
+                    });
+                });
+            });
+
+            function switchToDriverView() {
+                document.getElementById('driver-view').style.display = 'block';
+                document.getElementById('admin-view').style.display = 'none';
+            }
+
+            function switchToAdminView() {
+                document.getElementById('driver-view').style.display = 'none';
+                document.getElementById('admin-view').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TR(a)UCK</title>
+    
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: transparent;
+            color: white;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        nav {
+            margin: 0 auto;
+        }
+
+        .header-left .logo {
+    width: 150px; 
+    height: auto;
+    margin-right: 0px; 
+    vertical-align: middle;
+}
+
+.header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: 20px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding-right: 700px;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #f0f0f0;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ff0000;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-right: 20px;
+        }
+
+        .header-right a {
+            color: #f0f0f0;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            background-color: #7e0000;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .header-right a:hover {
+            background-color: #003d80;
+        }
+        
+        
+        /* Style pour la section "À propos" */
+#about {
+    background-color: #2a2a2a;
+    color: #f0f0f0;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: red;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.about-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.about-content p {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    max-width: 900px;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+
+
+
+
+
+#hero {
+    position: relative;
+    text-align: center;
+    padding: 8rem 2rem;
+    color: #f0f0f0;
+    height: 500px;
+}
+
+#hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+        #hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        #hero .btn {
+            padding: 1rem 2rem;
+            background-color: #ff0000;
+            color: #f0f0f0;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        #hero .btn:hover {
+            background-color: #e60000;
+        }
+
+        .section-padding {
+            padding: 4rem 2rem;
+        }
+
+        .features-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .feature-item {
+            background: #2a2a2a;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .feature-item i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ff0000;
+        }
+
+        #contact {
+            background: #0a0a0a;
+            color: #f0f0f0;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        #contact form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        #contact form input, #contact form textarea {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 4px;
+            border: none;
+            background: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        #contact form button {
+            padding: 1rem 2rem;
+            background-color: #ff0000;
+            color: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        #contact form button:hover {
+            background-color: #e60000;
+        }
+
+        footer {
+            background-color: #0a0a0a;
+            color: #f0f0f0;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        /* Modifications pour agrandir la barre des onglets et les aligner sur la même ligne */
+        .tabs {
+            display: flex;
+            justify-content: space-evenly; /* Espace égal entre les onglets */
+            border-bottom: 4px solid #f0f0f0;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            flex-wrap: nowrap; /* Empêche le retour à la ligne */
+        }
+
+        .tab {
+            padding: 20px 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: color 0.3s, background-color 0.3s;
+            color: #f0f0f0;
+            font-size: 1.3rem;
+            flex: 1; /* Chaque onglet prend la même largeur */
+            text-align: center; /* Centrer le texte des onglets */
+            white-space: nowrap; /* Empêche le saut de ligne dans le texte des onglets */
+        }
+
+        .tab.active {
+            color: #ff0000;
+            border-bottom: 4px solid #ff0000;
+        }
+
+        .tab-content-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+
+        .tab-content-wrapper img,
+        .tab-content-wrapper video {
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .tab-content-wrapper div {
+            flex: 1;
+        }
+
+        .tab-content-wrapper h3 {
+            margin-top: 0;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <img src="logo 2.png" alt="Logo de TR(a)UCK" class="logo">
+        </div>
+        <nav>
+            
+            <ul>
+                <li><a href="#hero">Accueil</a></li>
+                <li><a href="#about">À propos</a></li>
+                <li><a href="#features">Fonctionnalités</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="header-right">
+            <a href="login.html">Espace Clients</a>
+            <a href="">Contactez-nous</a>
+        </div>
+    </header>
+
+   
+    
+    <section id="hero">
+        <video autoplay muted loop playsinline id="hero-video">
+            <source src="vedio home page.mp4" type="video/mp4">
+            <!-- Ajoute un format alternatif ici si nécessaire -->
+        </video>
+        <div class="hero-content">
+            <h2>Opérez à un autre niveau</h2>
+            <p>Réduisez les coûts de carburant, augmentez la productivité, suivez vos équipements, et plus encore. Le tout sur une seule plateforme.</p>
+            <a href="#contact" class="btn">Consultez nos tarifs</a>
+        </div>
+    </section>
+
+    <!-- Section des onglets -->
+    <section id="tabs-section" class="section-padding">
+        <div class="container">
+            <div class="tabs">
+                <div class="tab active" onclick="showTabContent(0)">Optimisation des Trajets</div>
+                <div class="tab" onclick="showTabContent(1)">Rapports Hebdomadaires</div>
+                <div class="tab" onclick="showTabContent(2)">Améliorations Basées sur l'IA</div>
+                <div class="tab" onclick="showTabContent(3)">Tableau de Bord</div>
+            </div>
+
+            <div id="tabContents">
+                <div class="tab-content active">
+                    <div class="tab-content-wrapper">
+                        <img src="rapport 2.jpg" alt="Optimisation des Trajets">
+                        <div>
+                            <h3>Optimisation des Trajets</h3>
+                            <p>Le système TR(a)UCK optimise chaque trajet en analysant en temps réel les données GPS, la météo et les conditions de circulation. Grâce à l'algorithme de Dijkstra, les trajets sont planifiés pour minimiser les distances, le coût en carburant, et les délais de livraison, améliorant ainsi l'efficacité globale.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-content-wrapper">
+                        <img src="rapport.png" alt="Rapports Hebdomadaires">
+                        <div>
+                            <h3>Rapports Hebdomadaires</h3>
+                            <p>Générez des rapports hebdomadaires automatisés avec un résumé des distances parcourues, la consommation de carburant, et le temps de trajet moyen. Ces rapports incluent des analyses des inefficacités pour vous permettre de planifier des améliorations continues.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-content-wrapper">
+                        <img src="ai.jpg" alt="IA">
+                        <div>
+                            <h3>Améliorations Basées sur l'IA</h3>
+                            <p>Notre composante d'intelligence artificielle analyse les données historiques pour prévoir les besoins en carburant, identifier les routes optimales, et proposer des ajustements logistiques en cas de changements imprévus (comme les conditions météorologiques défavorables).</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-content-wrapper">
+                        <img src="bord.png" alt="Tableau de Bord">
+                        <div>
+                            <h3>Tableau de Bord</h3>
+                            <p>Le tableau de bord convivial permet aux conducteurs de suivre leur itinéraire en temps réel, et aux administrateurs d'accéder aux métriques de performance. Les données sont filtrables par véhicule, conducteur ou période, pour une analyse détaillée et précise.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Autres sections -->
+  
+    <section id="about" class="section-padding">
+        <div class="container">
+            <h2 class="section-title">À propos de TR(a)UCK</h2>
+            <div class="about-content">
+                <p>TR(a)UCK est une plateforme innovante conçue pour optimiser la logistique des transports en temps réel. Nous aidons les entreprises à réduire leurs coûts, à améliorer leur efficacité, et à atteindre une durabilité accrue grâce à l'utilisation de données GPS et de l'intelligence artificielle.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="section-padding">
+        <div class="container">
+            <h2>Fonctionnalités</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-route"></i>
+                    <h3>Optimisation des Trajets</h3>
+                    <p>Utilisation d'algorithmes avancés pour optimiser chaque itinéraire en fonction des conditions réelles (météo, trafic, etc.).</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Tableaux de Bord</h3>
+                    <p>Surveillez les performances de votre flotte avec des données en temps réel, incluant la consommation de carburant et l'état des véhicules.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>Rapports Hebdomadaires</h3>
+                    <p>Générez des rapports automatisés avec des insights prédictifs pour planifier des améliorations continues.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section-padding">
+        <div class="container">
+            <h2>Contactez-nous</h2>
+            <p>Intéressé par TR(a)UCK? Remplissez le formulaire ci-dessous et notre équipe vous contactera rapidement.</p>
+            <form id="contact-form">
+                <input type="text" id="name" name="name" placeholder="Votre nom" required>
+                <input type="email" id="email" name="email" placeholder="Votre email" required>
+                <textarea id="message" name="message" rows="5" placeholder="Votre message" required></textarea>
+                <button type="submit">Envoyer</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 TR(A)UCK. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript pour les onglets -->
+    <script>
+        function showTabContent(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach((tab, idx) => {
+                if (idx === index) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+
+            contents.forEach((content, idx) => {
+                if (idx === index) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+       // levenement dont la navbar disparaitre lorsque vous scroller au bas
+        let lastScrollTop = 0;
+const navbar = document.querySelector("header");
+
+window.addEventListener("scroll", function() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  
+    if (scrollTop > lastScrollTop) {
+        // Scroll vers le bas, cache la navbar
+        navbar.style.transform = "translateY(-100%)";
+    } else {
+        // Scroll vers le haut, affiche la navbar
+        navbar.style.transform = "translateY(0)";
+    }
+
+    lastScrollTop = scrollTop;
+});
+
+    </script>
+</body>
+</html>
